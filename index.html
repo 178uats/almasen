@@ -5,20 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Gestión de Almacén</title>
 
-  <!-- METATAGS PARA FUNCIONAR COMO APP EN iOS (iOS 9.3.5) -->
+  <!-- Configuración básica para web app en iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Almacén">
-
-  <!-- ICONOS EMBEBIDOS EN SVG / BASE64 (No requiere conexión para cargar la imagen) -->
-  <!-- 1. Icono táctil para pantalla de inicio de iPod / iPhone -->
-  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23007AFF'/><path d='M45 55 L135 55 L145 75 L35 75 Z' fill='%23FFFFFF' opacity='0.9'/><rect x='40' y='80' width='100' height='65' rx='8' fill='%23FFFFFF'/><path d='M70 100 L110 100 M70 115 L100 115' stroke='%23007AFF' stroke-width='6' stroke-linecap='round'/></svg>">
-  
-  <!-- 2. Tamaños optimizados para la Pantalla Retina de 4" del iPod Touch 5G -->
-  <link rel="apple-touch-icon" sizes="120x120" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><rect width='120' height='120' rx='26' fill='%23007AFF'/><path d='M30 36 L90 36 L96 50 L24 50 Z' fill='%23FFFFFF' opacity='0.9'/><rect x='26' y='54' width='68' height='44' rx='6' fill='%23FFFFFF'/><path d='M46 68 L74 68 M46 78 L66 78' stroke='%23007AFF' stroke-width='4' stroke-linecap='round'/></svg>">
-
-  <!-- 3. Favicon genérico para pestañas de navegador -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23007AFF'/><rect x='6' y='12' width='20' height='14' rx='2' fill='%23FFFFFF'/><path d='M10 16 L22 16' stroke='%23007AFF' stroke-width='2'/></svg>">
 
   <style>
     * {
@@ -31,7 +21,6 @@
       margin: 0;
       padding: 10px;
       color: #000;
-      padding-top: env(safe-area-inset-top, 10px);
     }
     h1 {
       font-size: 20px;
@@ -138,7 +127,6 @@
 
   <h1>Control de Almacén</h1>
 
-  <!-- Formulario de Registro -->
   <div class="card">
     <div class="form-group">
       <label for="nombre">Nombre del Producto</label>
@@ -160,13 +148,11 @@
     <button class="btn" onclick="agregarProducto()">Guardar Producto</button>
   </div>
 
-  <!-- Estadísticas Rápidas -->
   <div class="card stats">
     <span>Total Ítems: <span id="totalItems">0</span></span>
     <span>Unidades: <span id="totalUnidades">0</span></span>
   </div>
 
-  <!-- Búsqueda e Inventario -->
   <div class="card">
     <input type="text" id="buscar" class="search-box" placeholder="🔍 Buscar por nombre..." onkeyup="renderizarTabla()">
     
@@ -180,7 +166,6 @@
         </tr>
       </thead>
       <tbody id="cuerpoTabla">
-        <!-- Contenido generado con JavaScript -->
       </tbody>
     </table>
     <div id="mensajeVacio" class="empty-msg" style="display:none;">No hay productos registrados</div>
