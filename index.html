@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Lark iPod Player</title>
 
-  <!-- Favicon ultraligero compatible con GitHub Pages -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
+  <!-- Icono exclusivo para la pantalla de inicio del iPod Touch 5G -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%230f0f12'/><text x='50%` y='55%' font-size='90' text-anchor='middle' dominant-baseline='middle'>🎵</text></svg>">
 
   <!-- Configuración Web App para iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -54,8 +54,6 @@
       cursor: pointer;
     }
     input[type="file"] { display: none; }
-
-    /* Visualizador y Carátula */
     .player-screen {
       flex: 1;
       display: flex;
@@ -77,16 +75,12 @@
       box-shadow: 0 0 20px rgba(0,242,254,0.3);
       margin-bottom: 15px;
     }
-    .disc-icon {
-      font-size: 50px;
-    }
+    .disc-icon { font-size: 50px; }
     canvas {
       width: 100%;
       height: 40px;
       margin-bottom: 10px;
     }
-
-    /* Info de la Canción */
     .song-title {
       font-size: 16px;
       font-weight: bold;
@@ -102,8 +96,6 @@
       color: #8a8a9e;
       margin-bottom: 15px;
     }
-
-    /* Barras de Progreso y Tiempo */
     .progress-container {
       width: 100%;
       padding: 0 10px;
@@ -119,8 +111,6 @@
       width: 100%;
       accent-color: #00f2fe;
     }
-
-    /* Controles de Reproducción */
     .controls {
       display: flex;
       justify-content: space-evenly;
@@ -146,8 +136,6 @@
       justify-content: center;
       box-shadow: 0 4px 12px rgba(0,114,255,0.4);
     }
-
-    /* Lista de Reproducción */
     .playlist-panel {
       height: 120px;
       background: #14141d;
@@ -182,14 +170,9 @@
     <div class="disc-container">
       <span class="disc-icon">🎧</span>
     </div>
-
-    <!-- Visualizador de Barras de Ecualizador (Canvas) -->
     <canvas id="visualizer"></canvas>
-
     <div class="song-title" id="titulo">Selecciona una canción</div>
     <div class="song-artist" id="artista">Archivos locales .mp3</div>
-
-    <!-- Barra de progreso de la canción -->
     <div class="progress-container">
       <input type="range" id="progressBar" value="0" min="0" max="100" onchange="cambiarProgreso()">
       <div class="time-box">
@@ -197,8 +180,6 @@
         <span id="duration">00:00</span>
       </div>
     </div>
-
-    <!-- Botones estilo Lark Player -->
     <div class="controls">
       <button class="btn-ctrl" onclick="toggleBucle()" id="btnLoop">🔁</button>
       <button class="btn-ctrl" onclick="anteriorCancion()">⏮</button>
@@ -208,49 +189,39 @@
     </div>
   </div>
 
-  <!-- Lista de canciones cargadas -->
   <div class="playlist-panel" id="playlist">
     <div style="text-align:center; font-size:11px; color:#666; padding-top:40px;">No hay canciones cargadas</div>
   </div>
 
-  <!-- Elemento HTML5 de Audio oculto -->
   <audio id="audioPlayer"></audio>
 
   <script>
-    // Variables ES5 compatibles con iOS 9.3.5
     var audio = document.getElementById('audioPlayer');
     var playlist = [];
     var indiceActual = 0;
     var esBucle = false;
     var esAleatorio = false;
-
     var canvas = document.getElementById('visualizer');
     var ctx = canvas.getContext('2d');
 
-    // 1. Cargar canciones locales usando la API File
     function cargarArchivos(e) {
       var files = e.target.files;
       if (!files.length) return;
-
       for (var i = 0; i < files.length; i++) {
-        var file = files[i];
         playlist.push({
-          nombre: file.name.replace(/\.[^/.]+$/, ""),
-          url: URL.createObjectURL(file)
+          nombre: files[i].name.replace(/\.[^/.]+$/, ""),
+          url: URL.createObjectURL(files[i])
         });
       }
-
       renderizarPlaylist();
       if (playlist.length === files.length) {
         reproducirCancion(0);
       }
     }
 
-    // 2. Renderizar la lista de reproducción
     function renderizarPlaylist() {
       var container = document.getElementById('playlist');
       container.innerHTML = '';
-
       for (var i = 0; i < playlist.length; i++) {
         var div = document.createElement('div');
         div.className = 'playlist-item' + (i === indiceActual ? ' active' : '');
@@ -260,13 +231,11 @@
       }
     }
 
-    // 3. Control de Reproducción
     function reproducirCancion(index) {
       if (index < 0 || index >= playlist.length) return;
       indiceActual = index;
       audio.src = playlist[indiceActual].url;
       audio.play();
-
       document.getElementById('titulo').innerText = playlist[indiceActual].nombre;
       document.getElementById('btnPlay').innerText = '⏸';
       renderizarPlaylist();
@@ -311,7 +280,6 @@
       document.getElementById('btnShuffle').style.color = esAleatorio ? '#00f2fe' : '#fff';
     }
 
-    // 4. Barra de Progreso y Tiempos
     audio.ontimeupdate = function() {
       if (audio.duration) {
         var pct = (audio.currentTime / audio.duration) * 100;
@@ -323,9 +291,7 @@
     };
 
     audio.onended = function() {
-      if (!esBucle) {
-        siguienteCancion();
-      }
+      if (!esBucle) siguienteCancion();
     };
 
     function cambiarProgreso() {
@@ -343,17 +309,13 @@
       return m + ':' + s;
     }
 
-    // 5. Animación de Ecualizador para iOS 9.3.5
     function dibujarEcualizadorFalso() {
       canvas.width = canvas.clientWidth;
       canvas.height = canvas.clientHeight;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       if (audio.paused) return;
-
       var numBarras = 20;
       var anchoBarra = (canvas.width / numBarras) - 2;
-
       for (var i = 0; i < numBarras; i++) {
         var altoBarra = Math.random() * canvas.height;
         ctx.fillStyle = '#00f2fe';
