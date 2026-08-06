@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Gestión de Almacén</title>
+
+  <!-- METATAGS PARA FUNCIONAR COMO APP EN iOS (iOS 9.3.5) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Almacén">
+
+  <!-- ICONOS EMBEBIDOS EN SVG / BASE64 (No requiere conexión para cargar la imagen) -->
+  <!-- 1. Icono táctil para pantalla de inicio de iPod / iPhone -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23007AFF'/><path d='M45 55 L135 55 L145 75 L35 75 Z' fill='%23FFFFFF' opacity='0.9'/><rect x='40' y='80' width='100' height='65' rx='8' fill='%23FFFFFF'/><path d='M70 100 L110 100 M70 115 L100 115' stroke='%23007AFF' stroke-width='6' stroke-linecap='round'/></svg>">
+  
+  <!-- 2. Tamaños optimizados para la Pantalla Retina de 4" del iPod Touch 5G -->
+  <link rel="apple-touch-icon" sizes="120x120" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><rect width='120' height='120' rx='26' fill='%23007AFF'/><path d='M30 36 L90 36 L96 50 L24 50 Z' fill='%23FFFFFF' opacity='0.9'/><rect x='26' y='54' width='68' height='44' rx='6' fill='%23FFFFFF'/><path d='M46 68 L74 68 M46 78 L66 78' stroke='%23007AFF' stroke-width='4' stroke-linecap='round'/></svg>">
+
+  <!-- 3. Favicon genérico para pestañas de navegador -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23007AFF'/><rect x='6' y='12' width='20' height='14' rx='2' fill='%23FFFFFF'/><path d='M10 16 L22 16' stroke='%23007AFF' stroke-width='2'/></svg>">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: -apple-system, HelveticaNeue, sans-serif;
+      background-color: #f2f2f7;
+      margin: 0;
+      padding: 10px;
+      color: #000;
+      padding-top: env(safe-area-inset-top, 10px);
+    }
+    h1 {
+      font-size: 20px;
+      text-align: center;
+      margin: 10px 0 15px 0;
+      color: #1c1c1e;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .form-group {
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: bold;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #fafafa;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #fff;
+      background-color: #007aff;
+      border: none;
+      border-radius: 6px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .btn:active {
+      background-color: #0051a8;
+    }
+    .btn-danger {
+      background-color: #ff3b30;
+      padding: 5px 8px;
+      font-size: 12px;
+      width: auto;
+    }
+    .btn-danger:active {
+      background-color: #c42b24;
+    }
+    .stats {
+      display: -webkit-box;
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: bold;
+      color: #333;
+    }
+    .search-box {
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 8px 4px;
+      text-align: left;
+      border-bottom: 1px solid #e5e5ea;
+    }
+    th {
+      color: #8e8e93;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      color: #fff;
+      font-weight: bold;
+    }
+    .bg-green { background-color: #34c759; }
+    .bg-orange { background-color: #ff9500; }
+    .bg-red { background-color: #ff3b30; }
+    .empty-msg {
+      text-align: center;
+      color: #8e8e93;
+      padding: 15px 0;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Control de Almacén</h1>
+
+  <!-- Formulario de Registro -->
+  <div class="card">
+    <div class="form-group">
+      <label for="nombre">Nombre del Producto</label>
+      <input type="text" id="nombre" placeholder="Ej. Cable USB, Monitor">
+    </div>
+    <div class="form-group">
+      <label for="categoria">Ubicación / Estante</label>
+      <select id="categoria">
+        <option value="A-1">Estante A-1</option>
+        <option value="A-2">Estante A-2</option>
+        <option value="B-1">Estante B-1</option>
+        <option value="Caja">Caja General</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="cantidad">Cantidad en Stock</label>
+      <input type="number" id="cantidad" placeholder="0">
+    </div>
+    <button class="btn" onclick="agregarProducto()">Guardar Producto</button>
+  </div>
+
+  <!-- Estadísticas Rápidas -->
+  <div class="card stats">
+    <span>Total Ítems: <span id="totalItems">0</span></span>
+    <span>Unidades: <span id="totalUnidades">0</span></span>
+  </div>
+
+  <!-- Búsqueda e Inventario -->
+  <div class="card">
+    <input type="text" id="buscar" class="search-box" placeholder="🔍 Buscar por nombre..." onkeyup="renderizarTabla()">
+    
+    <table id="tablaInventario">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Ubicación</th>
+          <th>Cant.</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="cuerpoTabla">
+        <!-- Contenido generado con JavaScript -->
+      </tbody>
+    </table>
+    <div id="mensajeVacio" class="empty-msg" style="display:none;">No hay productos registrados</div>
+  </div>
+
+  <script>
+    function obtenerInventario() {
+      var datos = localStorage.getItem('almacen_inventario');
+      return datos ? JSON.parse(datos) : [];
+    }
+
+    function guardarInventario(inventario) {
+      localStorage.setItem('almacen_inventario', JSON.stringify(inventario));
+    }
+
+    function agregarProducto() {
+      var nombreInput = document.getElementById('nombre');
+      var categoriaInput = document.getElementById('categoria');
+      var cantidadInput = document.getElementById('cantidad');
+
+      var nombre = nombreInput.value.trim();
+      var categoria = categoriaInput.value;
+      var cantidad = parseInt(cantidadInput.value, 10);
+
+      if (nombre === '' || isNaN(cantidad)) {
+        alert('Por favor, ingresa un nombre y una cantidad válida.');
+        return;
+      }
+
+      var inventario = obtenerInventario();
+      
+      var nuevoProducto = {
+        id: new Date().getTime(),
+        nombre: nombre,
+        categoria: categoria,
+        cantidad: cantidad
+      };
+
+      inventario.push(nuevoProducto);
+      guardarInventario(inventario);
+
+      nombreInput.value = '';
+      cantidadInput.value = '';
+
+      renderizarTabla();
+    }
+
+    function eliminarProducto(id) {
+      var inventario = obtenerInventario();
+      var nuevoInventario = [];
+
+      for (var i = 0; i < inventario.length; i++) {
+        if (inventario[i].id !== id) {
+          nuevoInventario.push(inventario[i]);
+        }
+      }
+
+      guardarInventario(nuevoInventario);
+      renderizarTabla();
+    }
+
+    function renderizarTabla() {
+      var inventario = obtenerInventario();
+      var filtro = document.getElementById('buscar').value.toLowerCase();
+      var cuerpoTabla = document.getElementById('cuerpoTabla');
+      var mensajeVacio = document.getElementById('mensajeVacio');
+      
+      var totalItemsEl = document.getElementById('totalItems');
+      var totalUnidadesEl = document.getElementById('totalUnidades');
+
+      cuerpoTabla.innerHTML = '';
+
+      var totalUnidades = 0;
+      var visibles = 0;
+
+      for (var i = 0; i < inventario.length; i++) {
+        var item = inventario[i];
+
+        if (item.nombre.toLowerCase().indexOf(filtro) !== -1) {
+          visibles++;
+          totalUnidades += item.cantidad;
+
+          var badgeClass = 'bg-green';
+          if (item.cantidad <= 2) {
+            badgeClass = 'bg-red';
+          } else if (item.cantidad <= 5) {
+            badgeClass = 'bg-orange';
+          }
+
+          var tr = document.createElement('tr');
+          tr.innerHTML = 
+            '<td><strong>' + escapeHTML(item.nombre) + '</strong></td>' +
+            '<td>' + escapeHTML(item.categoria) + '</td>' +
+            '<td><span class="badge ' + badgeClass + '">' + item.cantidad + '</span></td>' +
+            '<td><button class="btn btn-danger" onclick="eliminarProducto(' + item.id + ')">X</button></td>';
+
+          cuerpoTabla.appendChild(tr);
+        }
+      }
+
+      totalItemsEl.innerHTML = inventario.length;
+      totalUnidadesEl.innerHTML = totalUnidades;
+
+      if (visibles === 0) {
+        mensajeVacio.style.display = 'block';
+      } else {
+        mensajeVacio.style.display = 'none';
+      }
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    window.onload = function() {
+      renderizarTabla();
+    };
+  </script>
+</body>
+</html>
