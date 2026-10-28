@@ -6,7 +6,12 @@
   <!-- Configuración para que parezca una App Nativa en iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <title>LarkPlayer</title>
+  <title>iPod Code Editor</title>
+
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CodeEdit">
 
   <style>
     * {
@@ -16,240 +21,135 @@
     }
     body {
       font-family: -apple-system, HelveticaNeue, sans-serif;
-      background-color: #121216;
-      color: #ffffff;
+      background-color: #1e1e1e;
+      color: #d4d4d4;
       margin: 0;
-      padding: 12px;
+      padding: 0;
       display: flex;
       flex-direction: column;
       height: 100vh;
       overflow: hidden;
     }
     header {
-      text-align: center;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #2a2a3a;
-      margin-bottom: 10px;
-    }
-    header h1 {
-      font-size: 16px;
-      margin: 0;
-      color: #00b0ff;
-    }
-    header p {
-      font-size: 11px;
-      color: #8a8a9e;
-      margin: 4px 0 0 0;
-    }
-    .upload-section {
-      background: #1a1a24;
-      border: 2px dashed #00b0ff;
-      border-radius: 10px;
-      padding: 12px;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .btn-upload {
-      background: linear-gradient(45deg, #00b0ff, #0072ff);
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: bold;
-      display: inline-block;
-      cursor: pointer;
-    }
-    input[type="file"] { display: none; }
-    
-    /* Reproductor Actual */
-    .player-card {
-      background: #1a1a24;
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 10px;
-      border: 1px solid #2a2a3a;
-      text-align: center;
-    }
-    .song-title {
-      font-size: 13px;
-      font-weight: bold;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 8px;
-      color: #00b0ff;
-    }
-    audio {
-      width: 100%;
-      height: 35px;
-      outline: none;
-    }
-
-    /* Lista de Canciones */
-    .playlist-container {
-      flex: 1;
-      overflow-y: auto;
-      background: #16161f;
-      border-radius: 10px;
-      padding: 8px;
-      border: 1px solid #222230;
-    }
-    .playlist-title {
-      font-size: 11px;
-      color: #777;
-      margin-bottom: 6px;
-      font-weight: bold;
-      padding-left: 4px;
-    }
-    .song-item {
-      background: #1e1e2c;
-      padding: 10px;
-      border-radius: 6px;
-      margin-bottom: 6px;
+      background-color: #252526;
+      padding: 8px 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border: 1px solid #2a2a3a;
+      border-bottom: 1px solid #333;
     }
-    .song-info {
-      font-size: 12px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 65%;
+    header h1 {
+      font-size: 14px;
+      margin: 0;
+      color: #4ec9b0;
     }
-    .song-btns {
+    .header-btns {
       display: flex;
       gap: 5px;
     }
-    .btn-sm {
-      padding: 5px 8px;
-      font-size: 10px;
+    .btn-action {
+      background: #0e639c;
+      color: #fff;
+      padding: 5px 10px;
       border-radius: 4px;
-      border: none;
+      font-size: 11px;
       font-weight: bold;
+      border: none;
       cursor: pointer;
     }
-    .btn-play { background: #00b0ff; color: #000; }
-    .btn-delete { background: #ff3333; color: #fff; }
-    .empty-state {
-      text-align: center;
-      color: #666;
-      font-size: 12px;
-      padding-top: 40px;
+    .btn-action:active { background: #1177bb; }
+    input[type="file"] { display: none; }
+    
+    .editor-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 5px;
     }
+    textarea {
+      flex: 1;
+      background-color: #1e1e1e;
+      color: #9cdcfe;
+      border: 1px solid #333;
+      border-radius: 4px;
+      padding: 8px;
+      font-family: monospace;
+      font-size: 13px;
+      resize: none;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      gap: 5px;
+    }
+    .btn-tool {
+      flex: 1;
+      background: #333;
+      color: #fff;
+      border: none;
+      padding: 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .btn-tool:active { background: #444; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>iPod MP3 Player</h1>
-    <p>Reproduce tus archivos MP3 locales del dispositivo</p>
+    <h1>CodeEditor</h1>
+    <div class="header-btns">
+      <label class="btn-action" for="fileInput">Abrir</label>
+      <input type="file" id="fileInput" accept=".html,.js,.css,.txt,*" onchange="cargarArchivo(event)">
+      <button class="btn-action" onclick="guardarArchivo()">Guardar</button>
+    </div>
   </header>
 
-  <div class="upload-section">
-    <label class="btn-upload" for="mp3Input">+ Cargar Archivos MP3</label>
-    <input type="file" id="mp3Input" accept="audio/mp3,audio/*" multiple onchange="cargarMp3s(event)">
-  </div>
-
-  <!-- Tarjeta de reproducción actual -->
-  <div class="player-card">
-    <div class="song-title" id="currentSongTitle">Ninguna canción seleccionada</div>
-    <audio id="audioPlayer" controls></audio>
-  </div>
-
-  <div class="playlist-container">
-    <div class="playlist-title">Mi Música Local:</div>
-    <div id="playlist">
-      <div class="empty-state">No hay canciones cargadas</div>
+  <div class="editor-body">
+    <textarea id="codigoArea" placeholder="// Escribe o pega tu código aquí..."></textarea>
+    
+    <div class="toolbar">
+      <button class="btn-tool" onclick="limpiar()">Limpiar</button>
+      <button class="btn-tool" onclick="ejecutarVistaPrevia()">▶ Ejecutar HTML</button>
     </div>
   </div>
 
   <script>
-    var listaCanciones = [];
-
-    window.onload = function() {
-      // Cargar música guardada previamente en el dispositivo si existe
-      var guardadas = localStorage.getItem('ipod_mp3s');
-      if (guardadas) {
-        try {
-          listaCanciones = JSON.parse(guardadas);
-          renderizarPlaylist();
-        } catch(e) {
-          listaCanciones = [];
-        }
-      }
-    };
-
-    function cargarMp3s(e) {
-      var files = e.target.files;
-      if (!files.length) return;
-
-      for (var i = 0; i < files.length; i++) {
-        var file = files[i];
-        var reader = new FileReader();
-
-        reader.onload = (function(f) {
-          return function(e) {
-            listaCanciones.push({
-              nombre: f.name,
-              url: e.target.result
-            });
-            guardarEnDispositivo();
-            renderizarPlaylist();
-          };
-        })(file);
-
-        reader.readAsDataURL(file);
+    function cargarArchivo(e) {
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        document.getElementById('codigoArea').value = event.target.result;
+      };
+      if (e.target.files[0]) {
+        reader.readAsText(e.target.files[0]);
       }
     }
 
-    function guardarEnDispositivo() {
-      try {
-        localStorage.setItem('ipod_mp3s', JSON.stringify(listaCanciones));
-      } catch(err) {
-        alert('El espacio de almacenamiento local se ha llenado.');
+    function guardarArchivo() {
+      var texto = document.getElementById('codigoArea').value;
+      var blob = new Blob([texto], { type: 'text/plain;charset=utf-8' });
+      var enlace = document.createElement('a');
+      enlace.href = URL.createObjectURL(blob);
+      enlace.download = 'codigo_editado.txt';
+      enlace.click();
+    }
+
+    function limpiar() {
+      if (confirm('¿Borrar todo el código?')) {
+        document.getElementById('codigoArea').value = '';
       }
     }
 
-    function renderizarPlaylist() {
-      var container = document.getElementById('playlist');
-      if (listaCanciones.length === 0) {
-        container.innerHTML = '<div class="empty-state">No hay canciones cargadas</div>';
-        return;
-      }
-
-      container.innerHTML = '';
-      for (var i = 0; i < listaCanciones.length; i++) {
-        var song = listaCanciones[i];
-        var div = document.createElement('div');
-        div.className = 'song-item';
-        div.innerHTML = 
-          '<div class="song-info">' + song.nombre + '</div>' +
-          '<div class="song-btns">' +
-            '<button class="btn-sm btn-play" onclick="reproducir(' + i + ')"> ▶ </button>' +
-            '<button class="btn-sm btn-delete" onclick="eliminar(' + i + ')"> X </button>' +
-          '</div>';
-        container.appendChild(div);
-      }
-    }
-
-    function reproducir(index) {
-      var song = listaCanciones[index];
-      var player = document.getElementById('audioPlayer');
-      var title = document.getElementById('currentSongTitle');
-
-      title.innerText = song.nombre;
-      player.src = song.url;
-      player.play();
-    }
-
-    function eliminar(index) {
-      if (confirm('¿Eliminar esta canción de la lista?')) {
-        listaCanciones.splice(index, 1);
-        guardarEnDispositivo();
-        renderizarPlaylist();
-      }
+    function ejecutarVistaPrevia() {
+      var codigo = document.getElementById('codigoArea').value;
+      var ventana = window.open();
+      ventana.document.open();
+      ventana.document.write(codigo);
+      ventana.document.close();
     }
   </script>
 </body>
